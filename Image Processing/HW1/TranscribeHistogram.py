@@ -50,14 +50,12 @@ def get_bar_height(image, idx):
 		y_pos-=1
 	return 274 - y_pos
 
-# Sections c, d
-# Remember to uncomment compare_hist before using it!
 
+# The function should implement the histogram-based pattern matching functionality
+# using the EMD between histograms to compare a window to the target.
+# The function should return whether a region was found with EMD < 260	
 def compare_hist(src_image, target):
-	
 
-
-	
 	return True 
 	return False
 	
