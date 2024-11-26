@@ -50,27 +50,23 @@ def get_bar_height(image, idx):
 		y_pos-=1
 	return 274 - y_pos
 
-# We get a small target and a big image, slide a target's size window on the image to search for a target match.
 # The function should return whether a region was found with EMD < 260	
 def compare_hist(src_image, target):
 	windows= np.lib.stride_tricks.sliding_window_view(src_image, (target.shape[0], target.shape[1])) #create the windows- (hh,ww,height,width), each window[hh,ww] represents a corresponding window with size (height,width)
-	
+	target_hist = cv2.calcHist([target], [0], None, [256], [0, 256]).flatten()  # get target histogram
+	target_sum = np.cumsum(target_hist) 	
+
 	for x in range(30, 50):
 		for y in range(100, 145):
-			#  לחשב את ה-cumulative histogram בעזרת np.cumsum(), ואז לחשב את ה-EMD לפי הנוסחה הפשוטה של סכום הערכים המוחלטים של הפרשי ההיסטוגרמות המצטברות
+			window_hist= cv2.calcHist([windows[y,x]], [0], None, [256], [0, 256]).flatten() #calculate the window’s histogram (256 length array).
+			window_sum=np.cumsum(window_hist)  # cumulative histogram
 			
-			cv2.calcHist([windows[y,x]], [0], None, [256], [0, 256]).flatten() #calculate the window’s histogram (256 length array).
-
-	#Since we will need only the topmost number (e.g 6 in a.jpg), you can search just the region around it without needing to look
-	#further down the image. With this function you can find if a digit is present in the image.
-
-
-	return True 
-	return False
+			emd = np.sum(np.abs(window_sum - target_sum)) # calc the total cumulative histogram difference
+			if emd < 260:
+				return True  # found a matching window
+				
+	return False # no match was found
 	
-
-
-# Sections a, b
 
 images, names = read_dir(r'C:\Users\ofekc\Desktop\CS_Haifa\FifthCS\Image Processing\HW1\data')
 numbers, _ = read_dir(r'C:\Users\ofekc\Desktop\CS_Haifa\FifthCS\Image Processing\HW1\numbers')
@@ -84,9 +80,18 @@ numbers, _ = read_dir(r'C:\Users\ofekc\Desktop\CS_Haifa\FifthCS\Image Processing
 # cv2.destroyAllWindows() 
 # exit()
 
-for i in range (9, -1 , -1):
-	if compare_hist(images[0], numbers[i]):
-		break  # Exit the loop if the histograms match
+# #check comapre_hist function
+# j=4
+# cv2.imshow('name', images[j]) 
+# cv2.waitKey(0)
+# for i in range (0,10):
+# 	print(i, ": ", compare_hist(images[j], numbers[i]))
+
+for j in range (0,7):
+	for i in range (9, -1 , -1):
+		if compare_hist(images[j], numbers[i]):
+			print("iamge", j, "gets result",i)
+			break  # Exit the loop if the histograms match
 
 
 # The following print line is what you should use when printing out the final result - the text version of each histogram, basically.
