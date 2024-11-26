@@ -55,16 +55,18 @@ def get_bar_height(image, idx):
 
 # def compare_hist(src_image, target):
 	# Your code goes here
-	
+
+
 	# return True
 	# or
 	# return False
+	
 
 
 # Sections a, b
 
-images, names = read_dir('data')
-numbers, _ = read_dir('numbers')
+images, names = read_dir(r'C:\Users\ofekc\Desktop\CS_Haifa\FifthCS\Image Processing\HW1\data')
+numbers, _ = read_dir(r'C:\Users\ofekc\Desktop\CS_Haifa\FifthCS\Image Processing\HW1\numbers')
 
 cv2.imshow(names[0], images[0]) 
 cv2.waitKey(0)
