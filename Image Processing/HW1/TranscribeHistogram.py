@@ -55,6 +55,12 @@ def get_bar_height(image, idx):
 # using the EMD between histograms to compare a window to the target.
 # The function should return whether a region was found with EMD < 260	
 def compare_hist(src_image, target):
+	np.lib.stride_tricks.sliding_window_view(image, (height, width)) #create the windows- (hh,ww,height,width), each window[hh,ww] represents a corresponding window with size (height,width)
+	cv2.calcHist([windows[y,x]], [0], None, [256], [0, 256]).flatten() #calculate the window’s histogram (256 length array).
+
+	#Since we will need only the topmost number (e.g 6 in a.jpg), you can search just the region around it without needing to look
+	#further down the image. With this function you can find if a digit is present in the image.
+
 
 	return True 
 	return False
