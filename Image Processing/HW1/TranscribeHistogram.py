@@ -81,7 +81,7 @@ numbers, _ = read_dir(r'C:\Users\ofekc\Desktop\CS_Haifa\FifthCS\Image Processing
 # cv2.destroyAllWindows() 
 # exit()
 
-for i in range (9, 0 , -1):
+for i in range (9, -1 , -1):
 	if compare_hist(images[0], numbers[i]):
 		break  # Exit the loop if the histograms match
 
