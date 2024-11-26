@@ -53,13 +53,13 @@ def get_bar_height(image, idx):
 # Sections c, d
 # Remember to uncomment compare_hist before using it!
 
-# def compare_hist(src_image, target):
-	# Your code goes here
+def compare_hist(src_image, target):
+	
 
 
-	# return True
-	# or
-	# return False
+	
+	return True 
+	return False
 	
 
 
@@ -68,10 +68,14 @@ def get_bar_height(image, idx):
 images, names = read_dir(r'C:\Users\ofekc\Desktop\CS_Haifa\FifthCS\Image Processing\HW1\data')
 numbers, _ = read_dir(r'C:\Users\ofekc\Desktop\CS_Haifa\FifthCS\Image Processing\HW1\numbers')
 
-cv2.imshow(names[0], images[0]) 
-cv2.waitKey(0)
-cv2.destroyAllWindows() 
-exit()
+# cv2.imshow('names[0]', images[0]) 
+# cv2.waitKey(0)
+# cv2.destroyAllWindows() 
+# # read digits
+# cv2.imshow('_[0]', numbers[0]) 
+# cv2.waitKey(0)
+# cv2.destroyAllWindows() 
+# exit()
 
 
 # The following print line is what you should use when printing out the final result - the text version of each histogram, basically.
