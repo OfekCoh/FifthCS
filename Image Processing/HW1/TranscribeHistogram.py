@@ -53,9 +53,13 @@ def get_bar_height(image, idx):
 # We get a small target and a big image, slide a target's size window on the image to search for a target match.
 # The function should return whether a region was found with EMD < 260	
 def compare_hist(src_image, target):
-	#  לחשב את ה-cumulative histogram בעזרת np.cumsum(), ואז לחשב את ה-EMD לפי הנוסחה הפשוטה של סכום הערכים המוחלטים של הפרשי ההיסטוגרמות המצטברות
 	windows= np.lib.stride_tricks.sliding_window_view(src_image, (target.shape[0], target.shape[1])) #create the windows- (hh,ww,height,width), each window[hh,ww] represents a corresponding window with size (height,width)
-	cv2.calcHist([windows[y,x]], [0], None, [256], [0, 256]).flatten() #calculate the window’s histogram (256 length array).
+	
+	for x in range(30, 50):
+		for y in range(100, 145):
+			#  לחשב את ה-cumulative histogram בעזרת np.cumsum(), ואז לחשב את ה-EMD לפי הנוסחה הפשוטה של סכום הערכים המוחלטים של הפרשי ההיסטוגרמות המצטברות
+			
+			cv2.calcHist([windows[y,x]], [0], None, [256], [0, 256]).flatten() #calculate the window’s histogram (256 length array).
 
 	#Since we will need only the topmost number (e.g 6 in a.jpg), you can search just the region around it without needing to look
 	#further down the image. With this function you can find if a digit is present in the image.
@@ -79,11 +83,10 @@ numbers, _ = read_dir(r'C:\Users\ofekc\Desktop\CS_Haifa\FifthCS\Image Processing
 # cv2.waitKey(0)
 # cv2.destroyAllWindows() 
 # exit()
-print(numbers[0].shape)
-print(images[0].shape)
-# for i in range (9, -1 , -1):
-# 	if compare_hist(images[0], numbers[i]):
-# 		break  # Exit the loop if the histograms match
+
+for i in range (9, -1 , -1):
+	if compare_hist(images[0], numbers[i]):
+		break  # Exit the loop if the histograms match
 
 
 # The following print line is what you should use when printing out the final result - the text version of each histogram, basically.
