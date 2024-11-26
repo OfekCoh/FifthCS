@@ -81,6 +81,10 @@ numbers, _ = read_dir(r'C:\Users\ofekc\Desktop\CS_Haifa\FifthCS\Image Processing
 # cv2.destroyAllWindows() 
 # exit()
 
+for i in range (9, 0 , -1):
+	if compare_hist(images[0], numbers[i]):
+		break  # Exit the loop if the histograms match
+
 
 # The following print line is what you should use when printing out the final result - the text version of each histogram, basically.
 
