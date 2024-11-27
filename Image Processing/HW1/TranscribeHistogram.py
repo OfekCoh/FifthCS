@@ -84,10 +84,10 @@ numbers, _ = read_dir(r'C:\Users\ofekc\Desktop\CS_Haifa\FifthCS\Image Processing
 # j=4
 # cv2.imshow('name', images[j]) 
 # cv2.waitKey(0)
-# for i in range (0,10):
+# for i in range (10):
 # 	print(i, ": ", compare_hist(images[j], numbers[i]))
 
-# for j in range (0,7):
+# for j in range (7):
 # 	for i in range (9, -1 , -1):
 # 		if compare_hist(images[j], numbers[i]):
 # 			print("iamge", j, "gets result",i)
