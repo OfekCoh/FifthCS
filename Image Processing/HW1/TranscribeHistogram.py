@@ -71,6 +71,10 @@ def compare_hist(src_image, target):
 images, names = read_dir(r'C:\Users\ofekc\Desktop\CS_Haifa\FifthCS\Image Processing\HW1\data')
 numbers, _ = read_dir(r'C:\Users\ofekc\Desktop\CS_Haifa\FifthCS\Image Processing\HW1\numbers')
 
+quantized_images= quantization(images,3)
+black_white_images = []
+
+
 # cv2.imshow('names[0]', images[0]) 
 # cv2.waitKey(0)
 # cv2.destroyAllWindows() 
@@ -80,34 +84,11 @@ numbers, _ = read_dir(r'C:\Users\ofekc\Desktop\CS_Haifa\FifthCS\Image Processing
 # cv2.destroyAllWindows() 
 # exit()
 
-# #check comapre_hist function
-# j=4
-# cv2.imshow('name', images[j]) 
-# cv2.waitKey(0)
-# for i in range (10):
-# 	print(i, ": ", compare_hist(images[j], numbers[i]))
-
 # for j in range (7):
 # 	for i in range (9, -1 , -1):
 # 		if compare_hist(images[j], numbers[i]):
 # 			print("iamge", j, "gets result",i)
 # 			break  # Exit the loop if the histograms match
-
- 
-quantized_images= quantization(images,3)
-black_white_images = []
-for i in range (7):
-	plt.imshow(quantized_images[i], cmap='gray')  # Use 'gray' for grayscale images
-	plt.axis('off')  # Optional: Hide axis ticks
-	plt.title('Image Display')  # Optional: Add a title
-	plt.show()
-# for img in quantized_images:
-#     _, binary_img = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-#     black_white_images.append(binary_img)
-
-# for i in range (7):
-# 	cv2.imshow(f'Black & White Image {i}', black_white_images[i]) 
-# 	cv2.waitKey(0)
 
 # The following print line is what you should use when printing out the final result - the text version of each histogram, basically.
 
