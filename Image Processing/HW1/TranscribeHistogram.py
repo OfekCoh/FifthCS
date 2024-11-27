@@ -87,12 +87,19 @@ numbers, _ = read_dir(r'C:\Users\ofekc\Desktop\CS_Haifa\FifthCS\Image Processing
 # for i in range (0,10):
 # 	print(i, ": ", compare_hist(images[j], numbers[i]))
 
-for j in range (0,7):
-	for i in range (9, -1 , -1):
-		if compare_hist(images[j], numbers[i]):
-			print("iamge", j, "gets result",i)
-			break  # Exit the loop if the histograms match
+# for j in range (0,7):
+# 	for i in range (9, -1 , -1):
+# 		if compare_hist(images[j], numbers[i]):
+# 			print("iamge", j, "gets result",i)
+# 			break  # Exit the loop if the histograms match
 
+ 
+quantized_images= quantization(images,3)
+black_white_images= quantization(quantized_images,2)
+
+for i in range (10):
+	cv2.imshow('images', black_white_images[i]) 
+	cv2.waitKey(0)
 
 # The following print line is what you should use when printing out the final result - the text version of each histogram, basically.
 
