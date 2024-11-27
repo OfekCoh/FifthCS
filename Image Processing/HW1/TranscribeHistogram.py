@@ -1,5 +1,3 @@
-# Student_Name1, Student_ID1
-# Student_Name2, Student_ID2
 
 import cv2
 import numpy as np
@@ -66,48 +64,48 @@ def compare_hist(src_image, target):
 				return True  # found a matching window
 				
 	return False # no match was found
-	
 
-images, names = read_dir(r'C:\Users\ofekc\Desktop\CS_Haifa\FifthCS\Image Processing\HW1\data')
-numbers, _ = read_dir(r'C:\Users\ofekc\Desktop\CS_Haifa\FifthCS\Image Processing\HW1\numbers')
+images, names = read_dir('data')
+numbers, _ = read_dir('numbers')
 
 max_student_num=[]  # get the top bar value for each image
 
-for img in range (7):
+for img in range (7):  # find max_student_num: the highest bar number, get from compare hist
 	for i in range (9, -1 , -1):
 		if compare_hist(images[img], numbers[i]):
-			# print("iamge", img, "gets result",i)
+			# print("image", img, "gets result",i)
 			max_student_num.append(i)
 			break  # Exit the loop if the histograms match
 
-quantized_images= quantization(images,3)  
+quantized_images= quantization(images,3)  # change to 3 colors images
 black_white_images = []
 
-for img in quantized_images:  # turn them to black and white
-	binary_img = np.full_like(img, 255,dtype='uint8')  # an image all white 
-	binary_img[(((img >= 211) & (img<=218))) | ((img>=86) & (img<=92))] = 0  # for all pixels between 211-218 or 86-92 in image turn them black in binary image
+for img in quantized_images:  # turn quantized_images to black and white
+	binary_img = np.full_like(img, 255,dtype='uint8')  # start with an image all white 
+	binary_img[img<220] = 0  # for all pixels under 220 in image turn them black in binary image
 	black_white_images.append(binary_img)  # add to black_white_images
 
 # max_student_num: the highest bar number, get from compare hist
-# max_bin_height: the height of the bar from above (i think its always the same?) 
+# max_bin_height: the height of that bar (from the line above)
 # bin_height: current bar height
 
 max_bin_height=[]   
 
-for img in black_white_images:
+for img in black_white_images: # find max_bin_height for each image
 	temp_heights=[] # save all heights of an image
 	for i in range (10):
 		temp_heights.append(get_bar_height(img, i))
 	max_bin_height.append(np.max(temp_heights))
 
 
-for id in range(7):  # loop through the images
-	heights=[]
-	for i in range (10):
+for id in range(7):  # loop through the images and calc how many students are in each bar
+	heights=[]  # store the results for each image
+	for i in range (10): # loop all bars
 		bin_height= (get_bar_height(black_white_images[id], i))
-		students_per_bin = round(max_student_num[id] * bin_height / max_bin_height[id])
+		students_per_bin = round(max_student_num[id] * bin_height / max_bin_height[id])  
 		heights.append(students_per_bin)
 	print(f'Histogram {names[id]} gave {heights}')
+
 
 
 
@@ -132,7 +130,3 @@ for id in range(7):  # loop through the images
 # cv2.imshow('names[0]', images[0]) 
 # cv2.waitKey(0)
 # cv2.destroyAllWindows() 
-
-
-
-
