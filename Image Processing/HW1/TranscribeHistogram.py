@@ -46,7 +46,7 @@ def get_bar_height(image, idx):
 	# Assuming the image is of the same pixel proportions as images supplied in this exercise, the following values will work
 	x_pos = 70 + 40 * idx
 	y_pos = 274
-	while image[y_pos, x_pos] == 1:
+	while image[y_pos, x_pos] == 0:
 		y_pos-=1
 	return 274 - y_pos
 
@@ -71,25 +71,68 @@ def compare_hist(src_image, target):
 images, names = read_dir(r'C:\Users\ofekc\Desktop\CS_Haifa\FifthCS\Image Processing\HW1\data')
 numbers, _ = read_dir(r'C:\Users\ofekc\Desktop\CS_Haifa\FifthCS\Image Processing\HW1\numbers')
 
-quantized_images= quantization(images,3)
+max_student_num=[]  # get the top bar value for each image
+
+for img in range (7):
+	for i in range (9, -1 , -1):
+		if compare_hist(images[img], numbers[i]):
+			# print("iamge", img, "gets result",i)
+			max_student_num.append(i)
+			break  # Exit the loop if the histograms match
+
+quantized_images= quantization(images,3)  
 black_white_images = []
 
+for img in quantized_images:  # turn them to black and white
+	binary_img = np.full_like(img, 255,dtype='uint8')  # an image all white 
+	binary_img[(((img >= 211) & (img<=218))) | ((img>=86) & (img<=92))] = 0  # for all pixels between 211-218 or 86-92 in image turn them black in binary image
+	black_white_images.append(binary_img)  # add to black_white_images
+
+# max_student_num: the highest bar number, get from compare hist
+# max_bin_height: the height of the bar from above (i think its always the same?) 
+# bin_height: current bar height
+
+max_bin_height=[]   
+
+for img in black_white_images:
+	temp_heights=[] # save all heights of an image
+	for i in range (10):
+		temp_heights.append(get_bar_height(img, i))
+	max_bin_height.append(np.max(temp_heights))
+
+
+for id in range(7):  # loop through the images
+	heights=[]
+	for i in range (10):
+		bin_height= (get_bar_height(black_white_images[id], i))
+		students_per_bin = round(max_student_num[id] * bin_height / max_bin_height[id])
+		heights.append(students_per_bin)
+	print(f'Histogram {names[id]} gave {heights}')
+
+
+
+
+
+
+# for x in range(7):   # check black and white images
+# 	plt.imshow(black_white_images[x], cmap='gray')
+# 	plt.show()
+# 	cv2.imshow('names[0]', black_white_images[x]) 
+# 	cv2.waitKey(0)
+# cv2.destroyAllWindows()
+
+# for x in quantized_images:   #check quantized_images pixels
+# 	plt.imshow(x, cmap='gray')
+# 	plt.show()
+
+# for x in black_white_images:   #check quantized_images pixels
+# 	plt.imshow(x, cmap='gray')
+# 	plt.show()
 
 # cv2.imshow('names[0]', images[0]) 
 # cv2.waitKey(0)
 # cv2.destroyAllWindows() 
-# # read digits
-# cv2.imshow('_[0]', numbers[0]) 
-# cv2.waitKey(0)
-# cv2.destroyAllWindows() 
-# exit()
 
-# for j in range (7):
-# 	for i in range (9, -1 , -1):
-# 		if compare_hist(images[j], numbers[i]):
-# 			print("iamge", j, "gets result",i)
-# 			break  # Exit the loop if the histograms match
 
-# The following print line is what you should use when printing out the final result - the text version of each histogram, basically.
 
-# print(f'Histogram {names[id]} gave {heights}')
+
