@@ -95,11 +95,19 @@ numbers, _ = read_dir(r'C:\Users\ofekc\Desktop\CS_Haifa\FifthCS\Image Processing
 
  
 quantized_images= quantization(images,3)
-black_white_images= quantization(quantized_images,2)
+black_white_images = []
+for i in range (7):
+	plt.imshow(quantized_images[i], cmap='gray')  # Use 'gray' for grayscale images
+	plt.axis('off')  # Optional: Hide axis ticks
+	plt.title('Image Display')  # Optional: Add a title
+	plt.show()
+# for img in quantized_images:
+#     _, binary_img = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+#     black_white_images.append(binary_img)
 
-for i in range (10):
-	cv2.imshow('images', black_white_images[i]) 
-	cv2.waitKey(0)
+# for i in range (7):
+# 	cv2.imshow(f'Black & White Image {i}', black_white_images[i]) 
+# 	cv2.waitKey(0)
 
 # The following print line is what you should use when printing out the final result - the text version of each histogram, basically.
 
