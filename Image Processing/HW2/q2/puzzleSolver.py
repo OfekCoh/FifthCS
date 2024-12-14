@@ -10,7 +10,8 @@ def get_transform(matches, is_affine):
 	
 	# Add your code here
 	if is_affine:
-		T,_=cv2.estimateAffine2D(src_points,dst_points) #(2X3)
+		T,_=cv2.estimateAffine2D(src_points,dst_points) #(2X3)  
+		# T,_=cv2.estimateAffine2D(src_points,dst_points,method=cv2.RANSAC) #(2X3)  added ransac for more pairs
 	else:
 		T,_=cv2.findHomography(src_points,dst_points) #(3X3)
 
@@ -26,7 +27,7 @@ def stitch(img1, img2):
 def inverse_transform_target_image(target_img, original_transform, output_size):
 
 	is_affine = original_transform.shape == (2, 3) # check if affine or not
-
+	
 	if is_affine:  # if the transform is affine (2x3) convert it to homography matrix (3x3)
 		homography_transform = np.vstack([original_transform, [0, 0, 1]])
 	else: # transform is homography so already (3x3)
@@ -57,13 +58,14 @@ def prepare_puzzle(puzzle_dir):
 	n_images = len(os.listdir(os.path.join(puzzle_dir, 'pieces')))
 
 	matches = np.loadtxt(matches_data, dtype=np.int64).reshape(n_images-1,affine,2,2)
+	# matches = np.loadtxt(matches_data, dtype=np.int64).reshape(n_images-1,affine+2,2,2) # we will add 2 extra matches for each iamge to make better results
 	
 	return matches, affine == 3, n_images
 
 
 if __name__ == '__main__':
 	lst = ['puzzle_affine_1', 'puzzle_affine_2', 'puzzle_homography_1']
-	# lst = ['puzzle_affine_1']
+	# lst = ['puzzle_affine_2']
 
 	for puzzle_dir in lst:
 		print(f'Starting {puzzle_dir}')
@@ -83,6 +85,10 @@ if __name__ == '__main__':
 		# place the first image on the canvas
 		final_puzzle[:canvas_size[1], :canvas_size[0]] = first_image
 		
+		# cv2.imshow("image", final_puzzle)
+		# cv2.waitKey(0)
+		# cv2.destroyAllWindows()
+
 		# continure with all other pieces
 		for idx in range(1,n_images):
 			piece = cv2.imread(os.path.join(pieces_pth, f'piece_{idx+1}.jpg'))
@@ -94,9 +100,9 @@ if __name__ == '__main__':
 
 			aligned_piece_path = os.path.join(edited, f'piece_{idx+1}_relative.jpg') # creates the path puzzles/abs_pieces/piece_2_relative.jpg
 			cv2.imwrite(aligned_piece_path, aligned_piece) # save the piece in the abs_pieces folder
-
-			final_puzzle = stitch(final_puzzle, aligned_piece) # stitch the aligned piece to the canvas
 			
+			final_puzzle = stitch(final_puzzle, aligned_piece) # stitch the aligned piece to the canvas
+				
 		cv2.imshow("image", final_puzzle)
 		cv2.waitKey(0)
 		cv2.destroyAllWindows()
