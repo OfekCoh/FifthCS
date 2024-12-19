@@ -58,7 +58,7 @@ def prepare_puzzle(puzzle_dir):
 	n_images = len(os.listdir(os.path.join(puzzle_dir, 'pieces')))
 
 	matches = np.loadtxt(matches_data, dtype=np.int64).reshape(n_images-1,affine,2,2)
-	# matches = np.loadtxt(matches_data, dtype=np.int64).reshape(n_images-1,affine+2,2,2) # we will add 2 extra matches for each iamge to make better results
+	# matches = np.loadtxt(matches_data, dtype=np.int64).reshape(n_images-1,8,2,2) # we will add 2 extra matches for each iamge to make better results
 	
 	return matches, affine == 3, n_images
 
@@ -85,9 +85,9 @@ if __name__ == '__main__':
 		# place the first image on the canvas
 		final_puzzle[:canvas_size[1], :canvas_size[0]] = first_image
 		
-		# cv2.imshow("image", final_puzzle)
-		# cv2.waitKey(0)
-		# cv2.destroyAllWindows()
+		cv2.imshow("image", final_puzzle)
+		cv2.waitKey(0)
+		cv2.destroyAllWindows()
 
 		# continure with all other pieces
 		for idx in range(1,n_images):
@@ -103,9 +103,9 @@ if __name__ == '__main__':
 			
 			final_puzzle = stitch(final_puzzle, aligned_piece) # stitch the aligned piece to the canvas
 				
-		cv2.imshow("image", final_puzzle)
-		cv2.waitKey(0)
-		cv2.destroyAllWindows()
+			cv2.imshow("image", final_puzzle)
+			cv2.waitKey(0)
+			cv2.destroyAllWindows()
 	
 		sol_file = f'solution.jpg'
 		cv2.imwrite(os.path.join(puzzle, sol_file), final_puzzle)
