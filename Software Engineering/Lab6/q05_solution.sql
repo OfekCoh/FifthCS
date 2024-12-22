@@ -1,0 +1,1 @@
+select ProductName from products where price=(select max(price) from products);

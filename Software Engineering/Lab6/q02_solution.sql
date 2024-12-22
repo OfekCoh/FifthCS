@@ -1,0 +1,1 @@
+select * from suppliers where city='Tel Aviv'
