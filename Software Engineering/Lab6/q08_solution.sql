@@ -1,6 +1,7 @@
-SELECT DISTINCT Customers.CustomerName, Suppliers.SupplierName, Customers.City
-FROM Customers
-JOIN Orders ON Customers.CustomerID = Orders.CustomerID
-JOIN Products ON Orders.ProductID = Products.ProductID
-JOIN Suppliers ON Products.SupplierID = Suppliers.SupplierID
-WHERE Customers.City = Suppliers.City;
+SELECT DISTINCT c.CustomerID, c.CustomerName, c.City, c.Email AS Email
+FROM Customers c
+JOIN Orders o ON c.CustomerID = o.CustomerID
+JOIN Products p ON o.ProductID = p.ProductID
+JOIN Suppliers s ON p.SupplierID = s.SupplierID
+WHERE c.City = s.City;
+

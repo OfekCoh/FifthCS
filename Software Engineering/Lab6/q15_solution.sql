@@ -1,7 +1,7 @@
 SELECT 
     cu.City, 
-    COUNT(DISTINCT cu.CustomerID) AS NumberOfCustomers, 
-    COUNT(DISTINCT s.SupplierID) AS NumberOfSuppliers
+    COUNT(DISTINCT cu.CustomerID) AS CustomerCount, 
+    COUNT(DISTINCT s.SupplierID) AS SupplierCount
 FROM 
     customers cu
 LEFT JOIN 
