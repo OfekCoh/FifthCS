@@ -1,5 +1,4 @@
-# Liran Anteby, 207435009
-# Ofek Cohen, 319001533
+
 
 # Please replace the above comments with your names and ID numbers in the same format.
 

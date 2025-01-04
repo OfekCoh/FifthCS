@@ -1,5 +1,4 @@
-# Ofek Cohen, 319001533
-# Liran Anteby, 207435009
+
 
 import cv2
 import numpy as np
