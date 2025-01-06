@@ -11,7 +11,7 @@ def clean_Gaussian_noise_bilateral(im, radius, stdSpatial, stdIntensity):
     # Size of the image
     height, width = im.shape
     
-    # Create the spatial Gaussian mask (gs) - precomputed as it's the same for every pixel
+    # Create the spatial Gaussian mask (gs) - precomputed as it's the same for every pixel.
     x, y = np.meshgrid(np.arange(-radius, radius + 1), np.arange(-radius, radius + 1))
     gs = np.exp(-(x**2 + y**2) / (2 * stdSpatial**2))
     
