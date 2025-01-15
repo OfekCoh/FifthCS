@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def clean_Gaussian_noise_bilateral(im, radius, stdSpatial, stdIntensity):
-	# Your code goes here
+	# Your code goes here.
     
     # As explained, using float64 for more accurate results
     im = im.astype(np.float64)
