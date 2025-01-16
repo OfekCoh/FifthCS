@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-canvas= np.zeros((50,50)) 
+canvas= np.zeros((1600,2400)) 
 canvas[25][25]=255
 
 plt.figure(figsize=(10,10))
