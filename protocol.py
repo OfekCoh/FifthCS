@@ -55,7 +55,8 @@ def bounded_model_checking(bound):
     )
 
     # never both processes in critical section
-    safety_property = Or([Not(And(PC1[i] == 7, PC2[i] == 7)) for i in range(bound + 1)])
+    # safety_property = And([Not(And(PC1[i] == 7, PC2[i] == 7)) for i in range(bound + 1)])
+    safety_property = Not(And(PC1[bound] == 7, PC2[bound] == 7))
 
     # Solver setup
     s = Solver()
@@ -63,16 +64,16 @@ def bounded_model_checking(bound):
     s.add(Not(safety_property))  # Looking for a violation
 
     if s.check() == sat:
-        print("Property violated! Counterexample found.")
+        print(f"Bound {bound}: Property violated! Counterexample found.")
         m = s.model()
         for i in range(bound + 1):
             print(f'time = {i}: PC1 = {m.evaluate(PC1[i])}, PC2 = {m.evaluate(PC2[i])}, x = {m.evaluate(x[i])}, y = {m.evaluate(y[i])}, z = {m.evaluate(z[i])}')
-    # else:
-    #     print("No counterexample found within given bound.")
 
-# Run bounded model checking with a bound of 20
-for k in range(0,10):
+
+# Run bounded model
+for k in range(0,20):
   bounded_model_checking(k)
+# print("done")
 	
 
 
