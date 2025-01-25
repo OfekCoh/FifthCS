@@ -26,7 +26,7 @@ def bounded_model_checking(bound):
     # create K x y z 
     x = [Int(f'x_{i}') for i in range(bound + 1)]
     y = [Int(f'y_{i}') for i in range(bound + 1)]
-    z = [Int(f'z_{i}') for i in range(bound + 1)]
+    z = [Int(f'z_{i}') for i in range(bound + 1)].
 
     # initialization
     init = [
