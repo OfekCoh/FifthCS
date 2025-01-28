@@ -73,7 +73,7 @@ def bounded_model_checking(bound):
 # Run bounded model
 for k in range(0,20):
   bounded_model_checking(k)
-# print("done")
+print("done")
 	
 
 
