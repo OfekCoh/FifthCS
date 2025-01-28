@@ -28,7 +28,7 @@ def bounded_model_checking(bound):
     y = [Int(f'y_{i}') for i in range(bound + 1)]
     z = [Int(f'z_{i}') for i in range(bound + 1)]
 
-    # initialization
+    # initialization.
     init = [
         PC1[0] == 1, PC2[0] == 1,  
         x[0] == 0, y[0] == 0, z[0] == 0  
