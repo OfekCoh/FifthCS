@@ -1,8 +1,3 @@
-# Student_Name1, Student_ID1
-# Student_Name2, Student_ID2
-
-# Please replace the above comments with your names and ID numbers in the same format.
-
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
@@ -12,102 +7,63 @@ import warnings
 warnings.filterwarnings("ignore")
 
 def scale_down(image, resize_ratio):
-    # Your code goes here
-    sigma = max(1.0, 1.0 / resize_ratio)
-    
-    # Compute an appropriate kernel size (ensure it's odd)
-    kernel_size = int(2 * round(3 * sigma) + 1)
-    kernel_size = max(3, kernel_size)  # Ensure minimum kernel size of 3x3
-    
-    # Apply Gaussian blur
-    blurred_image = cv2.GaussianBlur(image, (kernel_size, kernel_size), sigma)
+    # compute new size 
+    N,M = image.shape
+    half_N = int((N * resize_ratio) // 2)
+    half_M = int((M * resize_ratio) // 2)
+    center_N, center_M = N // 2, M // 2
 
-    # Compute the 2D Fourier Transform
-    f_transform = fftshift(fft2(blurred_image))
+    # crop the central portion of the frequency domain
+    fourier_transform = fftshift(fft2(image))
+    cropped = fourier_transform[center_N - half_N:center_N + half_N, center_M - half_M:center_M + half_M]
 
-    # Get the shape of the original image
-    rows, cols = blurred_image.shape
-    new_rows, new_cols = int(rows * resize_ratio), int(cols * resize_ratio)
+    # inverse to image domain
+    image_resized=np.abs(ifft2(ifftshift(cropped)))
+    image_resized = cv2.normalize(image_resized, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
 
-    # Define cropping boundaries in frequency domain
-    row_center, col_center = rows // 2, cols // 2
-    row_start, row_end = row_center - new_rows // 2, row_center + new_rows // 2
-    col_start, col_end = col_center - new_cols // 2, col_center + new_cols // 2
-
-    # Crop the frequency domain representation
-    cropped_f_transform = f_transform[row_start:row_end, col_start:col_end]
-
-    # Inverse Fourier Transform to obtain the downscaled image
-    f_transform_back = ifftshift(cropped_f_transform)
-    scaled_image = np.abs(ifft2(f_transform_back))
-
-    # Normalize and convert to uint8
-    scaled_image = cv2.normalize(scaled_image, None, 0, 255, cv2.NORM_MINMAX)
-    return scaled_image.astype(np.uint8)
+    return image_resized
 
 
 def scale_up(image, resize_ratio):
-    # Your code goes here
-    # Compute the 2D Fourier Transform
-    f_transform = fft2(image)
-    f_transform_shifted = fftshift(f_transform)
-
-    # Get the shape of the original image
-    rows, cols = image.shape
-    new_rows, new_cols = int(rows * resize_ratio), int(cols * resize_ratio)
-
-    # Create a new zero-padded frequency domain representation
-    padded_f_transform = np.zeros((new_rows, new_cols), dtype=complex)
-
-    # Define the position to insert the original frequency content
-    row_center, col_center = rows // 2, cols // 2
-    new_row_center, new_col_center = new_rows // 2, new_cols // 2
+    fourier_transform = fftshift(fft2(image))
     
-    # Copy the original frequency content to the center of the new padded array
-    padded_f_transform[new_row_center - row_center:new_row_center + row_center,
-                       new_col_center - col_center:new_col_center + col_center] = f_transform_shifted
+    # get sizes
+    height, width= fourier_transform.shape  
+    new_height, new_width= int(resize_ratio * height), int(resize_ratio * width)
+    start_h = (new_height - height) // 2
+    start_w = (new_width - width) // 2
 
-    # Inverse Fourier Transform to obtain the upscaled image
-    f_transform_shifted_back = ifftshift(padded_f_transform)
-    upscaled_image = np.abs(ifft2(f_transform_shifted_back))
+    # pad with zeros 
+    larger_fourier= np.zeros((new_height, new_width), dtype=complex)  
+    larger_fourier[start_h:start_h + height, start_w:start_w + width] = fourier_transform  # now theres the fourier values in the center and zeros padding around
 
-    # Normalize and convert to uint8
-    upscaled_image = cv2.normalize(upscaled_image, None, 0, 255, cv2.NORM_MINMAX)
-    return upscaled_image.astype(np.uint8)
+    # resize_ratio Larger Grayscale Image
+    image_resized=np.abs(ifft2(ifftshift(larger_fourier)))
+    image_resized = cv2.normalize(image_resized, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
+
+    return image_resized
 
 
 from numpy.lib.stride_tricks import sliding_window_view
 def ncc_2d(image, pattern):
-    # Your code goes here
-    # Create sliding windows of the same shape as the pattern
-    windows = sliding_window_view(image, pattern.shape)
-    
-    # Compute mean and standard deviation of the pattern
+    # extract the sliding windows from the image
+    windows = sliding_window_view(image, pattern.shape)  # Shape: (H', W', pattern_H, pattern_W)
+
+    # compute the mean and standard deviation of pattern
     pattern_mean = np.mean(pattern)
     pattern_std = np.std(pattern)
-    
-    # Handle the case when pattern variance is zero
-    if pattern_std == 0:
-        return np.zeros_like(image[:image.shape[0] - pattern.shape[0] + 1,
-                                  :image.shape[1] - pattern.shape[1] + 1])
-    
-    # Normalize the pattern
-    pattern_norm = (pattern - pattern_mean) / pattern_std
-    
-    # Compute mean and standard deviation for each window
-    window_means = np.mean(windows, axis=(2, 3))
-    window_stds = np.std(windows, axis=(2, 3))
-    
-    # Avoid division by zero by setting zero-variance regions to NCC of 0
-    valid_mask = window_stds > 0
-    ncc = np.zeros_like(window_means)
-    
-    # Perform NCC computation only for valid regions
-    ncc[valid_mask] = np.sum((windows[valid_mask] - window_means[valid_mask, None, None]) * pattern_norm,
-                             axis=(2, 3)) / (window_stds[valid_mask] * pattern_std)
-    
-    return ncc
 
+    # compute the mean and standard deviation of window
+    window_means = np.mean(windows, axis=(-2, -1))
+    window_stds = np.std(windows, axis=(-2, -1))
+
+    # compute NCC
+    numerator = np.sum((windows - window_means[..., None, None]) * (pattern - pattern_mean), axis=(-2, -1))
+    denominator = window_stds * pattern_std * pattern.size
+
+    ncc_values = np.where(denominator != 0, numerator / denominator, 0)
+    
+    return ncc_values
 
 
 def display(image, pattern):
@@ -130,6 +86,7 @@ def display(image, pattern):
     cbar.set_label('NCC Values')
         
     plt.show()
+
 
 def draw_matches(image, matches, pattern_size):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -155,48 +112,56 @@ pattern = cv2.imread('template.jpg')
 pattern = cv2.cvtColor(pattern, cv2.COLOR_BGR2GRAY)
 
 ############# DEMO #############
-display(image, pattern)
-
-
+# display(image, pattern)
 
 
 
 ############# Students #############
+im_ratio=1      # scale parameteres for image and patern
+pt_ratio=0.5
 
-image_scaled = # Your code goes here. If you choose not to scale the image, just remove it.
-pattern_scaled =  # Your code goes here. If you choose not to scale the pattern, just remove it.
+image_scaled = scale_down(image, im_ratio) 
+pattern_scaled =  scale_down(pattern, pt_ratio)
 
 display(image_scaled, pattern_scaled)
 
-ncc = # Your code goes here
-real_matches = # Your code goes here
+threshold=0.46  # for real matches
+ncc = ncc_2d(image_scaled, pattern_scaled)
+real_matches = np.argwhere(ncc >= threshold)  # returns the indices of matches
+
+# ######### DONT CHANGE THE NEXT TWO LINES #########
+real_matches[:,0] += pattern_scaled.shape[0] // 2			# if pattern was not scaled, replace this with "pattern"
+real_matches[:,1] += pattern_scaled.shape[1] // 2			# if pattern was not scaled, replace this with "pattern"
+
+draw_matches(image, real_matches, pattern_scaled.shape)	# if pattern was not scaled, replace this with "pattern"
+
+
+
+CURR_IMAGE = "thecrew"
+
+image = cv2.imread(f'{CURR_IMAGE}.jpg')
+image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# ############# Crew #############
+im_ratio=2.5     # scale parameteres for image and patern
+pt_ratio=0.6
+
+image_scaled = scale_up(image, im_ratio) 
+pattern_scaled =  scale_down(pattern, pt_ratio)
+
+display(image_scaled, pattern_scaled)
+
+threshold=0.435  # for real matches
+ncc = ncc_2d(image_scaled, pattern_scaled)
+real_matches = np.argwhere(ncc >= threshold)  # returns the indices of matches
 
 ######### DONT CHANGE THE NEXT TWO LINES #########
 real_matches[:,0] += pattern_scaled.shape[0] // 2			# if pattern was not scaled, replace this with "pattern"
 real_matches[:,1] += pattern_scaled.shape[1] // 2			# if pattern was not scaled, replace this with "pattern"
 
 # If you chose to scale the original image, make sure to scale back the matches in the inverse resize ratio.
+real_matches = (real_matches / im_ratio).astype(int)
 
 draw_matches(image, real_matches, pattern_scaled.shape)	# if pattern was not scaled, replace this with "pattern"
 
 
-
-
-
-############# Crew #############
-
-image_scaled = # Your code goes here. If you choose not to scale the image, just remove it.
-pattern_scaled =  # Your code goes here. If you choose not to scale the pattern, just remove it.
-
-display(image_scaled, pattern_scaled)
-
-ncc = # Your code goes here
-real_matches = # Your code goes here
-
-######### DONT CHANGE THE NEXT TWO LINES #########
-real_matches[:,0] += pattern_scaled.shape[0] // 2			# if pattern was not scaled, replace this with "pattern"
-real_matches[:,1] += pattern_scaled.shape[1] // 2			# if pattern was not scaled, replace this with "pattern"
-
-# If you chose to scale the original image, make sure to scale back the matches in the inverse resize ratio.
-
-draw_matches(image, real_matches, pattern_scaled.shape)	# if pattern was not scaled, replace this with "pattern"
