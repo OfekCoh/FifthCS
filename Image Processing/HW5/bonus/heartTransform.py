@@ -10,20 +10,14 @@ from collections import defaultdict
 
 def parametric_x(t):
 	# Your code goes here
+	return 14.5 * (np.sin(t) ** 3)
 
 def parametric_y(t):
 	# Your code goes here
+	return -(0.5 * np.cos(4*t) + 2 * np.cos(3*t) + 4 * np.cos(2*t) - 13 * np.cos(t))
 
-'''
-This is an example implementation for if we did a circle's transform.
 
-def parametric_x(t):
-	return np.cos(t)
 
-def parametric_y(t):
-	return np.sin(t)
-	
-'''
 
 def find_hough_shape(image, edge_image, r_min, r_max, bin_threshold):
 	img_height, img_width = image.shape[:2]
