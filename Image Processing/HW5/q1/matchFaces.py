@@ -7,7 +7,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 def scale_down(image, resize_ratio):
-    # compute new size.
+    # compute new size..
     N,M = image.shape
     half_N = int((N * resize_ratio) // 2)
     half_M = int((M * resize_ratio) // 2)
